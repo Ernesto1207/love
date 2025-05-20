@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Te Quiero</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-family: 'Arial', sans-serif;
+            color: red;
+            font-weight: bold;
+            text-shadow: 0 0 20px red;
+            animation: pulse 1.5s infinite;
+            z-index: 1;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="center-text">TE AMO MUCHO MI AMORCITO</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const message = "TE AMO";
+        const messageArray = message.split('');
+        const fontSize = 24;
+        const columns = canvas.width / fontSize;
+        const drops = new Array(Math.floor(columns)).fill(1);
+
+        const hearts = [];
+
+        function createHeart() {
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + 20,
+                size: 20 + Math.random() * 15,
+                speed: 0.5 + Math.random(),
+                opacity: Math.random()
+            });
+        }
+
+        function drawHearts() {
+            ctx.font = "20px Arial";
+            hearts.forEach((heart, index) => {
+                ctx.fillStyle = `rgba(255, 0, 100, ${heart.opacity})`;
+                ctx.fillText("❤️", heart.x, heart.y);
+                heart.y -= heart.speed;
+
+                if (heart.y < -20) {
+                    hearts.splice(index, 1);
+                }
+            });
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'red';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = messageArray[i % messageArray.length];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                ctx.fillText(text, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+
+            if (Math.random() < 0.1) {
+                createHeart();
+            }
+
+            drawHearts();
+        }
+
+        setInterval(drawMatrix, 70);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>
